@@ -7,6 +7,7 @@ import fs from "fs";
 
 export const processUpload = async (req, res) => {
   try {
+    const originalName = req.file.originalname;
     const loader = new PDFLoader(req.file.path);
     const docs = await loader.load();
     const splitter = new RecursiveCharacterTextSplitter({
@@ -34,7 +35,9 @@ export const processUpload = async (req, res) => {
       .status(200)
       .json({ message: `Securely processed: ${req.file.originalname}` });
   } catch (err) {
-    res.status(500).json({ error: "PDF Processing failed." });
+    res
+      .status(500)
+      .json({ error: "PDF Processing failed.", message: err.message });
   }
 };
 
